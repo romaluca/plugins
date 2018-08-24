@@ -240,6 +240,15 @@ public class ImagePickerDelegate
     activity.startActivityForResult(intent, REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA);
   }
 
+  public void chooseImageFromPath(MethodCall methodCall, MethodChannel.Result result, String path) {
+    if (!setPendingMethodCallAndResult(methodCall, result)) {
+      finishWithAlreadyActiveError();
+      return;
+    }
+    
+    handleImageResult(path);
+  }
+
   public void chooseImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
     if (!setPendingMethodCallAndResult(methodCall, result)) {
       finishWithAlreadyActiveError();
