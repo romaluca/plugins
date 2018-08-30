@@ -13,6 +13,7 @@
 
 static const int SOURCE_CAMERA = 0;
 static const int SOURCE_GALLERY = 1;
+static const int SOURCE_PATH = 2;
 
 @implementation FLTImagePickerPlugin {
   FlutterResult _result;
@@ -58,6 +59,9 @@ static const int SOURCE_GALLERY = 1;
     _arguments = call.arguments;
 
     int imageSource = [[_arguments objectForKey:@"source"] intValue];
+    NSLog(@"pickImage source1");
+    NSString *imagePath = [_arguments objectForKey:@"path"];
+    NSLog(@"pickImage source2 %@", imagePath);
 
     switch (imageSource) {
       case SOURCE_CAMERA:
@@ -65,6 +69,9 @@ static const int SOURCE_GALLERY = 1;
         break;
       case SOURCE_GALLERY:
         [self showPhotoLibrary];
+        break;
+      case SOURCE_PATH:
+        [self chooseFromImagePath:imagePath];
         break;
       default:
         result([FlutterError errorWithCode:@"invalid_source"
@@ -124,6 +131,16 @@ static const int SOURCE_GALLERY = 1;
   [_viewController presentViewController:_imagePickerController animated:YES completion:nil];
 }
 
+- (void)chooseFromImagePath: ( NSString * ) imagePath {
+    NSLog(@"chooseFromImagePath 0000");
+  if(imagePath) {
+    NSLog(@"chooseFromImagePath %@", imagePath);
+    UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
+    NSLog(@"chooseFromImagePath 2");
+    [self elaborateImage:image];    
+  } else _result(nil);
+}
+
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   NSURL *videoURL = [info objectForKey:UIImagePickerControllerMediaURL];
@@ -147,33 +164,37 @@ static const int SOURCE_GALLERY = 1;
   } else {
     if (image == nil) {
       image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    }
-    image = [self normalizedImage:image];
-
-    NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
-    NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
-
-    if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
-      image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
-    }
-
-    NSData *data = UIImageJPEGRepresentation(image, 1.0);
-    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString];
-    NSString *tmpFile = [NSString stringWithFormat:@"image_picker_%@.jpg", guid];
-    NSString *tmpDirectory = NSTemporaryDirectory();
-    NSString *tmpPath = [tmpDirectory stringByAppendingPathComponent:tmpFile];
-
-    if ([[NSFileManager defaultManager] createFileAtPath:tmpPath contents:data attributes:nil]) {
-      _result(tmpPath);
-    } else {
-      _result([FlutterError errorWithCode:@"create_error"
-                                  message:@"Temporary file could not be created"
-                                  details:nil]);
-    }
+    } 
+    [self elaborateImage:image];
   }
 
   _result = nil;
   _arguments = nil;
+}
+
+- (void) elaborateImage: (UIImage *) image {
+  image = [self normalizedImage:image];
+
+  NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
+  NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+
+  if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
+    image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
+  }
+
+  NSData *data = UIImageJPEGRepresentation(image, 1.0);
+  NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString];
+  NSString *tmpFile = [NSString stringWithFormat:@"image_picker_%@.jpg", guid];
+  NSString *tmpDirectory = NSTemporaryDirectory();
+  NSString *tmpPath = [tmpDirectory stringByAppendingPathComponent:tmpFile];
+
+  if ([[NSFileManager defaultManager] createFileAtPath:tmpPath contents:data attributes:nil]) {
+    _result(tmpPath);
+  } else {
+    _result([FlutterError errorWithCode:@"create_error"
+                                message:@"Temporary file could not be created"
+                                details:nil]);
+  }
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
