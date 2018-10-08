@@ -78,7 +78,7 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
                 .setColor(color)
                 .setContentTitle(remoteMessage.getData().get("title") == null ?
                         "Shuttertop" : remoteMessage.getData().get("title"))
-                .setContentText(remoteMessage.getData().get("message"))
+                .setContentText(remoteMessage.getData().get("body"))
                 .setContentIntent(pendingIntent)//ditto
                 .setAutoCancel(true)  //dismisses the notification on click
                 .setSound(defaultSoundUri);
