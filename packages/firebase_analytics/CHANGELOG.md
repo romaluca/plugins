@@ -1,3 +1,11 @@
+## 1.1.0
+
+* Allow user to handle `PlatformException`s caught by `FirebaseAnalyticsObserver._sendScreenView()`.
+
+## 1.0.6
+
+* Allow user ID to be set to null.
+
 ## 1.0.5
 
 * Update the `METHOD` Android constant used for `logSignUp` method.
