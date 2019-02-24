@@ -1,3 +1,25 @@
+## 0.2.0+5
+
+* Skip the Gradle Android permissions lint for MyLocation (https://github.com/flutter/flutter/issues/28339)
+* Suppress unchecked cast warning for the PlatformViewFactory creation parameters.
+
+## 0.2.0+4
+
+* Fixed a crash when the plugin is registered by a background FlutterView.
+
+## 0.2.0+3
+
+* Fixed a memory leak on Android - the map was not properly disposed.
+
+## 0.2.0+2
+
+* Log a more detailed warning at build time about the previous AndroidX
+  migration.
+
+## 0.2.0+1
+
+* Fixed a bug which the camera is not positioned correctly at map initialization(temporary workaround)(https://github.com/flutter/flutter/issues/27550).
+
 ## 0.2.0
 
 * **Breaking change**. Migrate from the deprecated original Android Support
