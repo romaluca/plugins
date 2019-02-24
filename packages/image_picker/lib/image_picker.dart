@@ -15,6 +15,8 @@ enum ImageSource {
 
   /// Opens the user's photo gallery.
   gallery,
+
+  path,
 }
 
 class ImagePicker {
@@ -33,6 +35,7 @@ class ImagePicker {
     @required ImageSource source,
     double maxWidth,
     double maxHeight,
+    String imagePath,
   }) async {
     assert(source != null);
 
@@ -53,6 +56,7 @@ class ImagePicker {
         'source': source.index,
         'maxWidth': maxWidth,
         'maxHeight': maxHeight,
+        'path': imagePath
       },
     );
 
