@@ -180,8 +180,14 @@ static const int SOURCE_PATH = 2;
 - (void) elaborateImage: (UIImage *) image {
   image = [self normalizedImage:image];
 
-  NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
-  NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+    BOOL saveAsPNG = [self hasAlpha:image];
+    NSData *data =
+        saveAsPNG ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, 1.0);
+    NSString *fileExtension = saveAsPNG ? @"image_picker_%@.png" : @"image_picker_%@.jpg";
+    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString];
+    NSString *tmpFile = [NSString stringWithFormat:fileExtension, guid];
+    NSString *tmpDirectory = NSTemporaryDirectory();
+    NSString *tmpPath = [tmpDirectory stringByAppendingPathComponent:tmpFile];
 
   if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
     image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
@@ -297,6 +303,13 @@ static const int SOURCE_PATH = 2;
     }
   
   return scaledImage;
+}
+
+// Returns true if the image has an alpha layer
+- (BOOL)hasAlpha:(UIImage *)image {
+  CGImageAlphaInfo alpha = CGImageGetAlphaInfo(image.CGImage);
+  return (alpha == kCGImageAlphaFirst || alpha == kCGImageAlphaLast ||
+          alpha == kCGImageAlphaPremultipliedFirst || alpha == kCGImageAlphaPremultipliedLast);
 }
 
 @end
