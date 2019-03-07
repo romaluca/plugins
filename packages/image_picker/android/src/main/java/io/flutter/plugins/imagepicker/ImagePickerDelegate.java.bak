@@ -242,7 +242,7 @@ public class ImagePickerDelegate
 
   public void chooseImageFromPath(MethodCall methodCall, MethodChannel.Result result, String path) {
     if (!setPendingMethodCallAndResult(methodCall, result)) {
-      finishWithAlreadyActiveError(result);
+      finishWithAlreadyActiveError();
       return;
     }
     
