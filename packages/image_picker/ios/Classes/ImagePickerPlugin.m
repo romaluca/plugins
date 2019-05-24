@@ -20,6 +20,7 @@
 
 static const int SOURCE_CAMERA = 0;
 static const int SOURCE_GALLERY = 1;
+static const int SOURCE_PATH = 2;
 
 @implementation FLTImagePickerPlugin {
   NSDictionary *_arguments;
@@ -64,6 +65,7 @@ static const int SOURCE_GALLERY = 1;
     _arguments = call.arguments;
 
     int imageSource = [[_arguments objectForKey:@"source"] intValue];
+    NSString *imagePath = [_arguments objectForKey:@"path"];
 
     switch (imageSource) {
       case SOURCE_CAMERA:
@@ -71,6 +73,9 @@ static const int SOURCE_GALLERY = 1;
         break;
       case SOURCE_GALLERY:
         [self checkPhotoAuthorization];
+        break;
+      case SOURCE_PATH:
+        [self chooseFromImagePath:imagePath];
         break;
       default:
         result([FlutterError errorWithCode:@"invalid_source"
@@ -225,6 +230,15 @@ static const int SOURCE_GALLERY = 1;
   [_viewController presentViewController:_imagePickerController animated:YES completion:nil];
 }
 
+- (void)chooseFromImagePath: ( NSString * ) imagePath {
+  NSLog(@"chooseFromImagePath");
+  if(imagePath) {
+    NSLog(@"chooseFromImagePath %@", imagePath);
+    UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
+    [self elaborateImage:image];    
+  } else _result(nil);
+}
+
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   NSURL *videoURL = [info objectForKey:UIImagePickerControllerMediaURL];
@@ -244,28 +258,31 @@ static const int SOURCE_GALLERY = 1;
     if (image == nil) {
       image = [info objectForKey:UIImagePickerControllerOriginalImage];
     }
+    [self elaborateImage:image];  
+  }  
+}
 
-    NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
-    NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+- (void) elaborateImage: (UIImage *) image {
+  NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
+  NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
 
-    if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
-      image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
-    }
+  if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
+    image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
+  }
 
-    PHAsset *originalAsset = [FLTImagePickerPhotoAssetUtil getAssetFromImagePickerInfo:info];
-    if (!originalAsset) {
-      // Image picked without an original asset (e.g. User took a photo directly)
-      [self saveImageWithPickerInfo:info image:image];
-    } else {
-      __weak typeof(self) weakSelf = self;
-      [[PHImageManager defaultManager]
-          requestImageDataForAsset:originalAsset
-                           options:nil
-                     resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
-                                     UIImageOrientation orientation, NSDictionary *_Nullable info) {
-                       [weakSelf saveImageWithOriginalImageData:imageData image:image];
-                     }];
-    }
+  PHAsset *originalAsset = [FLTImagePickerPhotoAssetUtil getAssetFromImagePickerInfo:info];
+  if (!originalAsset) {
+    // Image picked without an original asset (e.g. User took a photo directly)
+    [self saveImageWithPickerInfo:info image:image];
+  } else {
+    __weak typeof(self) weakSelf = self;
+    [[PHImageManager defaultManager]
+        requestImageDataForAsset:originalAsset
+                          options:nil
+                    resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
+                                    UIImageOrientation orientation, NSDictionary *_Nullable info) {
+                      [weakSelf saveImageWithOriginalImageData:imageData image:image];
+                    }];
   }
   _arguments = nil;
 }
