@@ -57,7 +57,10 @@
     result(nil);
   } else if ([@"setAnalyticsCollectionEnabled" isEqualToString:call.method]) {
     NSNumber *enabled = [NSNumber numberWithBool:call.arguments];
-    [[FIRAnalyticsConfiguration sharedInstance] setAnalyticsCollectionEnabled:[enabled boolValue]];
+    [FIRAnalytics setAnalyticsCollectionEnabled:[enabled boolValue]];
+    result(nil);
+  } else if ([@"resetAnalyticsData" isEqualToString:call.method]) {
+    [FIRAnalytics resetAnalyticsData];
     result(nil);
   } else {
     result(FlutterMethodNotImplemented);

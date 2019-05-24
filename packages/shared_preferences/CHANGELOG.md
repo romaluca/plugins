@@ -1,3 +1,15 @@
+## 0.5.2+1
+
+* .commit() calls are now run in an async background task on Android.
+
+## 0.5.2
+
+* Add containsKey method.
+
+## 0.5.1+2
+
+* Add a driver test
+
 ## 0.5.1+1
 
 * Log a more detailed warning at build time about the previous AndroidX
