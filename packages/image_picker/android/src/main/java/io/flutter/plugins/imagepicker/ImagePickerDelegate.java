@@ -284,7 +284,7 @@ public class ImagePickerDelegate
       return;
     }
     
-    handleImageResult(path);
+    handleImageResult(path, false);
   }
 
   public void chooseImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
