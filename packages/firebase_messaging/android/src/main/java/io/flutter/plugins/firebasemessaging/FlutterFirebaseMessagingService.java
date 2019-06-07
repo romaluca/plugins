@@ -97,11 +97,15 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
             Log.e("MessagingService", "Errore user_upload: " + e.getMessage());
         }
 
-
-        notificationManager =
+        try {
+            notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
+            notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
+            Log.i("MessagingService", " NotificationManager Notify");
+        } catch (IOException e) {
+            Log.e("MessagingService", "Errore notify: " + e.getMessage());
+        }
     }
   }
 
