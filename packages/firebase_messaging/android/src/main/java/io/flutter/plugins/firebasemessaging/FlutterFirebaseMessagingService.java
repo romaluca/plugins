@@ -107,7 +107,7 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
             Log.i("MessagingService", " NotificationManager Notify");
         } catch (Exception e) {
-            Log.e("MessagingService", "Errore notify: " + e.getMessage());
+            Log.e("MessagingService", "Errore not ify: " + e.getMessage());
         }
     }
   }
