@@ -98,9 +98,13 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         try {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            CharSequence name = "Shuttertop channel ";
             notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+            notificationManager.createNotificationChannel(mChannel);
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(mChannel);
             notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
             Log.i("MessagingService", " NotificationManager Notify");
         } catch (Exception e) {
