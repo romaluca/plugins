@@ -283,6 +283,12 @@ public class ImagePickerDelegate
       finishWithAlreadyActiveError(result);
       return;
     }
+
+    if (!permissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      permissionManager.askForPermission(
+              Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_EXTERNAL_IMAGE_STORAGE_PERMISSION);
+      return;
+    }
     
     handleImageResult(path, false);
   }
