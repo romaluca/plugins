@@ -235,7 +235,15 @@ static const int SOURCE_PATH = 2;
   if(imagePath) {
     NSLog(@"chooseFromImagePath %@", imagePath);
     UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
-    [self elaborateImage:image];    
+    NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
+    NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+
+    if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
+      image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
+    }
+    // TODO shared image!!
+    // [self saveImageWithPickerInfo:info image:image];
+    _arguments = nil;
   } else _result(nil);
 }
 
@@ -258,34 +266,31 @@ static const int SOURCE_PATH = 2;
     if (image == nil) {
       image = [info objectForKey:UIImagePickerControllerOriginalImage];
     }
-    [self elaborateImage:image];  
+    NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
+    NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+
+    if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
+      image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
+    }
+
+    PHAsset *originalAsset = [FLTImagePickerPhotoAssetUtil getAssetFromImagePickerInfo:info];
+    if (!originalAsset) {
+      // Image picked without an original asset (e.g. User took a photo directly)
+      [self saveImageWithPickerInfo:info image:image];
+    } else {
+      __weak typeof(self) weakSelf = self;
+      [[PHImageManager defaultManager]
+          requestImageDataForAsset:originalAsset
+                            options:nil
+                      resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
+                                      UIImageOrientation orientation, NSDictionary *_Nullable info) {
+                        [weakSelf saveImageWithOriginalImageData:imageData image:image];
+                      }];
+    }
+    _arguments = nil;
   }  
 }
 
-- (void) elaborateImage: (UIImage *) image {
-  NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
-  NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
-
-  if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
-    image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
-  }
-
-  PHAsset *originalAsset = [FLTImagePickerPhotoAssetUtil getAssetFromImagePickerInfo:info];
-  if (!originalAsset) {
-    // Image picked without an original asset (e.g. User took a photo directly)
-    [self saveImageWithPickerInfo:info image:image];
-  } else {
-    __weak typeof(self) weakSelf = self;
-    [[PHImageManager defaultManager]
-        requestImageDataForAsset:originalAsset
-                          options:nil
-                    resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
-                                    UIImageOrientation orientation, NSDictionary *_Nullable info) {
-                      [weakSelf saveImageWithOriginalImageData:imageData image:image];
-                    }];
-  }
-  _arguments = nil;
-}
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
   [_imagePickerController dismissViewControllerAnimated:YES completion:nil];
