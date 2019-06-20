@@ -74,6 +74,7 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
   @VisibleForTesting static final int REQUEST_EXTERNAL_VIDEO_STORAGE_PERMISSION = 2354;
   @VisibleForTesting static final int REQUEST_CAMERA_VIDEO_PERMISSION = 2355;
+  @VisibleForTesting static final int REQUEST_IMAGE_FROM_PATH_PERMISSION = 2356;
 
   @VisibleForTesting final String fileProviderName;
 
@@ -110,6 +111,8 @@ public class ImagePickerDelegate
   private Uri pendingCameraMediaUri;
   private MethodChannel.Result pendingResult;
   private MethodCall methodCall;
+
+  private String sharedImagePath;
 
   public ImagePickerDelegate(
       final Activity activity, File externalFilesDirectory, ImageResizer imageResizer) {
@@ -285,8 +288,9 @@ public class ImagePickerDelegate
     }
 
     if (!permissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      sharedImagePath = path;
       permissionManager.askForPermission(
-              Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_EXTERNAL_IMAGE_STORAGE_PERMISSION);
+              Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_IMAGE_FROM_PATH_PERMISSION);
       return;
     }
     
@@ -418,6 +422,11 @@ public class ImagePickerDelegate
           launchTakeVideoWithCameraIntent();
         }
         break;
+      case REQUEST_IMAGE_FROM_PATH_PERMISSION:
+        if (permissionGranted) {
+          handleImageResult(sharedImagePath, false);
+        }
+        break;
       default:
         return false;
     }
@@ -516,6 +525,8 @@ public class ImagePickerDelegate
       Double maxWidth = methodCall.argument("maxWidth");
       Double maxHeight = methodCall.argument("maxHeight");
       String finalImagePath = imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight);
+
+      String sharedImagePath = null;
 
       finishWithSuccess(finalImagePath);
 
