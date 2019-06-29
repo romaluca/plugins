@@ -241,8 +241,7 @@ static const int SOURCE_PATH = 2;
     if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
       image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
-    // TODO shared image!!
-    // [self saveImageWithPickerInfo:info image:image];
+    [self saveImageWithPickerInfo:info image:image];
     _arguments = nil;
   } else _result(nil);
 }
