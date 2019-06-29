@@ -39,6 +39,8 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
   private NotificationManager notificationManager;
   private static final String CHANNEL_ID = "media_playback_channel";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+  public static final String ACTION_TOKEN = "io.flutter.plugins.firebasemessaging.TOKEN";
+  public static final String EXTRA_TOKEN = "token";
 
   /**
    * Called when message is received.
@@ -95,11 +97,18 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
             Log.e("MessagingService", "Errore user_upload: " + e.getMessage());
         }
 
-
-        notificationManager =
+        try {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            CharSequence name = "Shuttertop channel ";
+            notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(mChannel);
+            notificationManager.notify(notificationId /* ID of notification */, notificationBuilder.build());
+            Log.i("MessagingService", " NotificationManager Notify");
+        } catch (Exception e) {
+            Log.e("MessagingService", "Errore not ify: " + e.getMessage());
+        }
     }
   }
 
@@ -150,4 +159,16 @@ public class FlutterFirebaseMessagingService extends FirebaseMessagingService {
   }
 
 
+  /**
+   * Called when a new token for the default Firebase project is generated.
+   *
+   * @param token The token used for sending messages to this application instance. This token is
+   *     the same as the one retrieved by getInstanceId().
+   */
+  @Override
+  public void onNewToken(String token) {
+    Intent intent = new Intent(ACTION_TOKEN);
+    intent.putExtra(EXTRA_TOKEN, token);
+    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+  }
 }
