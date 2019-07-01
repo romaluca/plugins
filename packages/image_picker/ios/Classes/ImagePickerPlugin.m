@@ -304,12 +304,15 @@ static const int SOURCE_PATH = 2;
   _arguments = nil;
 }
 
-- (void)saveImageWithOriginalImageData:(NSData *)originalImageData image:(UIImage *)image {
+- (void)saveImageWithOriginalImageData:(NSData *)originalImageData
+                                 image:(UIImage *)image
+                              maxWidth:(NSNumber *)maxWidth
+                             maxHeight:(NSNumber *)maxHeight {
   NSString *savedPath =
-      [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:originalImageData 
-                                                                  image:image
-                                                                  maxWidth:maxWidth	
-                                                                  maxHeight:maxHeight];                  
+      [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:originalImageData
+                                                             image:image
+                                                          maxWidth:maxWidth
+                                                         maxHeight:maxHeight];
   [self handleSavedPath:savedPath];
 }
 
