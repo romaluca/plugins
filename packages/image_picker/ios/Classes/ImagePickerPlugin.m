@@ -76,7 +76,7 @@ static const int SOURCE_PATH = 2;
         [self checkPhotoAuthorization];
         break;
       case SOURCE_PATH:
-        [self chooseFromImagePath:imagePath];
+        [self checkMemoryAuthorization:imagePath];
         break;
       default:
         result([FlutterError errorWithCode:@"invalid_source"
@@ -167,6 +167,34 @@ static const int SOURCE_PATH = 2;
   }
 }
 
+
+- (void)checkMemoryAuthorization: ( NSString * ) imagePath {
+  PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+  switch (status) {
+    case PHAuthorizationStatusNotDetermined: {
+      [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        if (status == PHAuthorizationStatusAuthorized) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            [self chooseFromImagePath:imagePath];
+          });
+        } else {
+          [self errorNoPhotoAccess:status];
+        }
+      }];
+      break;
+    }
+    case PHAuthorizationStatusAuthorized:
+      [self chooseFromImagePath:imagePath];
+      break;
+    case PHAuthorizationStatusDenied:
+    case PHAuthorizationStatusRestricted:
+    default:
+      [self errorNoPhotoAccess:status];
+      break;
+  }
+}
+
+
 - (void)checkPhotoAuthorization {
   PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
   switch (status) {
@@ -236,13 +264,20 @@ static const int SOURCE_PATH = 2;
   if(imagePath) {
     NSLog(@"chooseFromImagePath %@", imagePath);
     UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
+    NSData *originalImageData = [[NSFileManager defaultManager] contentsAtPath:imagePath];
     NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
     NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
 
     if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
       image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
-    [self saveImageWithPickerInfo:info image:image];
+    NSString *savedPath =
+      [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:originalImageData
+                                                             image:image
+                                                          maxWidth:maxWidth
+                                                         maxHeight:maxHeight];
+    NSLog(@"chooseFromImagePath savedPath: %@", savedPath);
+    [self handleSavedPath:savedPath];
     _arguments = nil;
   } else _result(nil);
 }
