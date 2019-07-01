@@ -269,7 +269,7 @@ static const int SOURCE_PATH = 2;
     NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
 
     if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
-      image = [self scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
+      image = [FLTImagePickerImageUtil scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
     NSString *savedPath =
       [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:originalImageData
