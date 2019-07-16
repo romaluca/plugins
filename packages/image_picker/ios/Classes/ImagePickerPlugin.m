@@ -133,6 +133,9 @@ static const int SOURCE_PATH = 2;
                                delegate:nil
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] show];
+    self.result(nil);
+    self.result = nil;
+    _arguments = nil;
   }
 }
 
