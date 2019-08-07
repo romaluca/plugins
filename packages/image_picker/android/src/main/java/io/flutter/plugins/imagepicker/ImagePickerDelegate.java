@@ -114,7 +114,6 @@ public class ImagePickerDelegate
   private MethodCall methodCall;
 
   private String sharedImagePath;
-  private String targetPath;
 
   public ImagePickerDelegate(
       final Activity activity,
@@ -226,7 +225,7 @@ public class ImagePickerDelegate
               ? 100
               : (int) resultMap.get(cache.MAP_KEY_IMAGE_QUALITY);
 
-      String newPath = imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, targetPath);
+      String newPath = imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, null);
       resultMap.put(cache.MAP_KEY_PATH, newPath);
     }
     if (resultMap.isEmpty()) {
@@ -303,7 +302,6 @@ public class ImagePickerDelegate
     if (targetPath != null) {
       if (!permissionManager.isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         sharedImagePath = path;
-        this.targetPath = targetPath;
         permissionManager.askForPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_IMAGE_FROM_PATH_PERMISSION);
         return;
@@ -312,7 +310,6 @@ public class ImagePickerDelegate
 
     if (!permissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
       sharedImagePath = path;
-      this.targetPath = null;
       permissionManager.askForPermission(
               Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_IMAGE_FROM_PATH_PERMISSION);
       return;
@@ -561,12 +558,11 @@ public class ImagePickerDelegate
           methodCall.argument("imageQuality") == null
               ? 100
               : (int) methodCall.argument("imageQuality");
-
+      String targetPath = methodCall.argument("targetPath");
       String finalImagePath =
           imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, targetPath);
 
       sharedImagePath = null;
-      targetPath = null;
 
       finishWithSuccess(finalImagePath);
 
