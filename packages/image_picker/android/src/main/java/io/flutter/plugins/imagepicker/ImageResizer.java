@@ -109,7 +109,10 @@ class ImageResizer {
 
     File imageFile;
     if (targetPath != null)
+    {
       imageFile = new File(targetPath);
+      imageFile.getParentFile().mkdirs();
+    }
     else
       imageFile = new File(externalFilesDirectory, "/scaled_" + imageName);
     FileOutputStream fileOutput = new FileOutputStream(imageFile);
