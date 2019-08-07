@@ -162,7 +162,8 @@ public class ImagePickerPlugin implements MethodChannel.MethodCallHandler {
             break;
           case SOURCE_PATH:
             String imagePath = call.argument("path");
-            delegate.chooseImageFromPath(call, result, imagePath);
+            String targetPath = call.argument("targetPath");
+            delegate.chooseImageFromPath(call, result, imagePath, targetPath);
             break;
           default:
             throw new IllegalArgumentException("Invalid image source: " + imageSource);

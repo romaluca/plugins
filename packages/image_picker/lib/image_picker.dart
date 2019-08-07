@@ -47,7 +47,8 @@ class ImagePicker {
     double maxWidth,
     double maxHeight,
     String imagePath,
-    int imageQuality
+    int imageQuality,
+    String targetPath
   }) async {
     assert(source != null);
     assert(imageQuality == null || (imageQuality >= 0 && imageQuality <= 100));
@@ -67,6 +68,7 @@ class ImagePicker {
         'maxWidth': maxWidth,
         'maxHeight': maxHeight,
         'path': imagePath,
+        'targetPath': targetPath,
         'imageQuality': imageQuality
       },
     );

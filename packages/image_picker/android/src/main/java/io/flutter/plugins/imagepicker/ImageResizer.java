@@ -28,7 +28,7 @@ class ImageResizer {
    * <p>If no resizing is needed, returns the path for the original image.
    */
   String resizeImageIfNeeded(
-      String imagePath, Double maxWidth, Double maxHeight, int imageQuality) {
+      String imagePath, Double maxWidth, Double maxHeight, int imageQuality, String targetPath) {
     boolean shouldScale =
         maxWidth != null || maxHeight != null || (imageQuality > -1 && imageQuality < 101);
 
@@ -37,7 +37,7 @@ class ImageResizer {
     }
 
     try {
-      File scaledImage = resizedImage(imagePath, maxWidth, maxHeight, imageQuality);
+      File scaledImage = resizedImage(imagePath, maxWidth, maxHeight, imageQuality, targetPath);
       exifDataCopier.copyExif(imagePath, scaledImage.getPath());
 
       return scaledImage.getPath();
@@ -46,7 +46,7 @@ class ImageResizer {
     }
   }
 
-  private File resizedImage(String path, Double maxWidth, Double maxHeight, int imageQuality)
+  private File resizedImage(String path, Double maxWidth, Double maxHeight, int imageQuality, String targetPath)
       throws IOException {
     Bitmap bmp = BitmapFactory.decodeFile(path);
     double originalWidth = bmp.getWidth() * 1.0;
@@ -107,7 +107,11 @@ class ImageResizer {
     String[] pathParts = path.split("/");
     String imageName = pathParts[pathParts.length - 1];
 
-    File imageFile = new File(externalFilesDirectory, "/scaled_" + imageName);
+    File imageFile;
+    if (targetPath != null)
+      imageFile = new File(targetPath);
+    else
+      imageFile = new File(externalFilesDirectory, "/scaled_" + imageName);
     FileOutputStream fileOutput = new FileOutputStream(imageFile);
     fileOutput.write(outputStream.toByteArray());
     fileOutput.close();

@@ -114,6 +114,7 @@ public class ImagePickerDelegate
   private MethodCall methodCall;
 
   private String sharedImagePath;
+  private String targetPath;
 
   public ImagePickerDelegate(
       final Activity activity,
@@ -225,7 +226,7 @@ public class ImagePickerDelegate
               ? 100
               : (int) resultMap.get(cache.MAP_KEY_IMAGE_QUALITY);
 
-      String newPath = imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality);
+      String newPath = imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, targetPath);
       resultMap.put(cache.MAP_KEY_PATH, newPath);
     }
     if (resultMap.isEmpty()) {
@@ -293,14 +294,25 @@ public class ImagePickerDelegate
     activity.startActivityForResult(intent, REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA);
   }
 
-  public void chooseImageFromPath(MethodCall methodCall, MethodChannel.Result result, String path) {
+  public void chooseImageFromPath(MethodCall methodCall, MethodChannel.Result result, String path, String targetPath) {
     if (!setPendingMethodCallAndResult(methodCall, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
 
+    if (targetPath != null) {
+      if (!permissionManager.isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        sharedImagePath = path;
+        this.targetPath = targetPath;
+        permissionManager.askForPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_IMAGE_FROM_PATH_PERMISSION);
+        return;
+      }
+    }
+
     if (!permissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
       sharedImagePath = path;
+      this.targetPath = null;
       permissionManager.askForPermission(
               Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_IMAGE_FROM_PATH_PERMISSION);
       return;
@@ -551,9 +563,10 @@ public class ImagePickerDelegate
               : (int) methodCall.argument("imageQuality");
 
       String finalImagePath =
-          imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality);
+          imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, targetPath);
 
-      String sharedImagePath = null;
+      sharedImagePath = null;
+      targetPath = null;
 
       finishWithSuccess(finalImagePath);
 
