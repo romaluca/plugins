@@ -38,7 +38,8 @@ class ImageResizer {
 
     try {
       File scaledImage = resizedImage(imagePath, maxWidth, maxHeight, imageQuality, targetPath);
-      exifDataCopier.copyExif(imagePath, scaledImage.getPath());
+      if (targetPath != null)
+        exifDataCopier.copyExif(imagePath, scaledImage.getPath());
 
       return scaledImage.getPath();
     } catch (IOException e) {
