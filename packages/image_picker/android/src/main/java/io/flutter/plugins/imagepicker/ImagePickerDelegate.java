@@ -202,6 +202,7 @@ public class ImagePickerDelegate
     this.cache = cache;
   }
 
+  // Save the state of the image picker so it can be retrieved with `retrieveLostImage`.
   void saveStateBeforeResult() {
     if (methodCall == null) {
       return;
@@ -554,11 +555,9 @@ public class ImagePickerDelegate
     if (methodCall != null) {
       Double maxWidth = methodCall.argument("maxWidth");
       Double maxHeight = methodCall.argument("maxHeight");
-      int imageQuality =
-          methodCall.argument("imageQuality") == null
-              ? 100
-              : (int) methodCall.argument("imageQuality");
+      Integer imageQuality = methodCall.argument("imageQuality");
       String targetPath = methodCall.argument("targetPath");
+
       String finalImagePath =
           imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality, targetPath);
 
