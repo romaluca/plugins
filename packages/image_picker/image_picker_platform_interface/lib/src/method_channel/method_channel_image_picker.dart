@@ -50,6 +50,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
         'maxWidth': maxWidth,
         'maxHeight': maxHeight,
         'imageQuality': imageQuality,
+        'path': imagePath,
         'targetPath': targetPath,
         'imageQuality': imageQuality,      
         'cameraDevice': preferredCameraDevice.index

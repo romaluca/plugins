@@ -58,7 +58,7 @@ class ImagePicker {
       source: source,
       maxWidth: maxWidth,
       maxHeight: maxHeight,
-      path: imagePath,
+      imagePath: imagePath,
       targetPath: targetPath,
       imageQuality: imageQuality,      
       preferredCameraDevice: preferredCameraDevice,
