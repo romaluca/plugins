@@ -9,4 +9,7 @@ enum ImageSource {
 
   /// Opens the user's photo gallery.
   gallery,
+
+  
+  path
 }
