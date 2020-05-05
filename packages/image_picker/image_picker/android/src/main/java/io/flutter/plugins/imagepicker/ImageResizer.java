@@ -102,7 +102,7 @@ class ImageResizer {
 
     Bitmap scaledBmp = createScaledBitmap(bmp, width.intValue(), height.intValue(), false);
     File file =
-        createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality);
+        createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality, targetPath);
     return file;
   }
 
@@ -134,7 +134,7 @@ class ImageResizer {
     return imageQuality != null && imageQuality > 0 && imageQuality < 100;
   }
 
-  private File createImageOnExternalDirectory(String name, Bitmap bitmap, int imageQuality)
+  private File createImageOnExternalDirectory(String name, Bitmap bitmap, int imageQuality, String targetPath)
       throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     boolean saveAsPNG = bitmap.hasAlpha();
