@@ -14,7 +14,10 @@ flutter:
         fileName: image_picker_for_web.dart
 
 dependencies:
-  image_picker_platform_interface: ^1.1.0
+  image_picker_platform_interface: #^1.0.0
+    git:
+      url: git://github.com/romaluca/plugins.git
+      path: packages/image_picker/image_picker_platform_interface
   flutter:
     sdk: flutter
   flutter_web_plugins:

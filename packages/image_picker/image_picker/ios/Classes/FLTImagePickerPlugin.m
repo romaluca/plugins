@@ -290,6 +290,7 @@ static const int SOURCE_PATH = 2;
 - (void)chooseFromImagePath: ( NSString * ) imagePath {
   NSLog(@"chooseFromImagePath");
   if(imagePath) {
+    __weak typeof(self) weakSelf = self;<
     NSLog(@"chooseFromImagePath %@", imagePath);
     UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
     NSData *originalImageData = [[NSFileManager defaultManager] contentsAtPath:imagePath];
@@ -300,7 +301,7 @@ static const int SOURCE_PATH = 2;
       image = [FLTImagePickerImageUtil scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
     NSString *savedPath =
-      [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:originalImageData
+      [weakSelf saveImageWithOriginalImageData:originalImageData
                                                              image:image
                                                           maxWidth:maxWidth
                                                          maxHeight:maxHeight];
