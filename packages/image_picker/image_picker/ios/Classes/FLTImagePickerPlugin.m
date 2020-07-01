@@ -309,14 +309,14 @@ static const int SOURCE_PATH = 2;
     if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
       image = [FLTImagePickerImageUtil scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
-    NSString *savedPath =
-      [weakSelf saveImageWithOriginalImageData:originalImageData
+    //NSString *savedPath =
+     [weakSelf saveImageWithOriginalImageData:originalImageData
                                              image:image
                                              maxWidth:maxWidth
                                              maxHeight:maxHeight
                                              imageQuality:imageQuality];
-    NSLog(@"chooseFromImagePath savedPath: %@", savedPath);
-    [self handleSavedPath:savedPath];
+    //NSLog(@"chooseFromImagePath savedPath: %@", savedPath);
+    //[self handleSavedPath:savedPath];
     _arguments = nil;
   } else _result(nil);
 }
