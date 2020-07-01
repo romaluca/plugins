@@ -290,21 +290,31 @@ static const int SOURCE_PATH = 2;
 - (void)chooseFromImagePath: ( NSString * ) imagePath {
   NSLog(@"chooseFromImagePath");
   if(imagePath) {
-    __weak typeof(self) weakSelf = self;<
+    __weak typeof(self) weakSelf = self;
     NSLog(@"chooseFromImagePath %@", imagePath);
     UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
     NSData *originalImageData = [[NSFileManager defaultManager] contentsAtPath:imagePath];
     NSNumber *maxWidth = [_arguments objectForKey:@"maxWidth"];
     NSNumber *maxHeight = [_arguments objectForKey:@"maxHeight"];
+    NSNumber *imageQuality = [_arguments objectForKey:@"imageQuality"];
+
+    if (![imageQuality isKindOfClass:[NSNumber class]]) {
+      imageQuality = @1;
+    } else if (imageQuality.intValue < 0 || imageQuality.intValue > 100) {
+      imageQuality = [NSNumber numberWithInt:1];
+    } else {
+      imageQuality = @([imageQuality floatValue] / 100);
+    }
 
     if (maxWidth != (id)[NSNull null] || maxHeight != (id)[NSNull null]) {
       image = [FLTImagePickerImageUtil scaledImage:image maxWidth:maxWidth maxHeight:maxHeight];
     }
     NSString *savedPath =
       [weakSelf saveImageWithOriginalImageData:originalImageData
-                                                             image:image
-                                                          maxWidth:maxWidth
-                                                         maxHeight:maxHeight];
+                                             image:image
+                                             maxWidth:maxWidth
+                                             maxHeight:maxHeight
+                                             imageQuality:imageQuality];
     NSLog(@"chooseFromImagePath savedPath: %@", savedPath);
     [self handleSavedPath:savedPath];
     _arguments = nil;
