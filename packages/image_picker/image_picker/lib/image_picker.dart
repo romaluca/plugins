@@ -55,7 +55,7 @@ class ImagePicker {
   static Future<File> pickImage(
       {@required ImageSource source,
       double maxWidth,
-      double maxHeight,      
+      double maxHeight,
       int imageQuality,
       String imagePath,
       String targetPath,
@@ -66,7 +66,7 @@ class ImagePicker {
       maxHeight: maxHeight,
       imagePath: imagePath,
       targetPath: targetPath,
-      imageQuality: imageQuality,      
+      imageQuality: imageQuality,
       preferredCameraDevice: preferredCameraDevice,
     );
 
@@ -100,12 +100,16 @@ class ImagePicker {
     double maxWidth,
     double maxHeight,
     int imageQuality,
+    String imagePath,
+    String targetPath,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) {
     return platform.pickImage(
       source: source,
       maxWidth: maxWidth,
       maxHeight: maxHeight,
+      imagePath: imagePath,
+      targetPath: targetPath,
       imageQuality: imageQuality,
       preferredCameraDevice: preferredCameraDevice,
     );

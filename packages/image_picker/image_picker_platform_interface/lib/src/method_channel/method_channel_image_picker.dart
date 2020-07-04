@@ -24,6 +24,8 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     @required ImageSource source,
     double maxWidth,
     double maxHeight,
+    String imagePath,
+    String targetPath,
     int imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
@@ -31,6 +33,8 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       source: source,
       maxWidth: maxWidth,
       maxHeight: maxHeight,
+      imagePath: imagePath,
+      targetPath: targetPath,
       imageQuality: imageQuality,
       preferredCameraDevice: preferredCameraDevice,
     );
@@ -70,7 +74,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
         'imageQuality': imageQuality,
         'path': imagePath,
         'targetPath': targetPath,
-        'imageQuality': imageQuality,      
+        'imageQuality': imageQuality,
         'cameraDevice': preferredCameraDevice.index
       },
     );
