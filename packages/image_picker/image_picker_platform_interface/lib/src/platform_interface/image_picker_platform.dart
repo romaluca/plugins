@@ -143,6 +143,8 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     double maxWidth,
     double maxHeight,
     int imageQuality,
+    String imagePath,
+    String targetPath,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) {
     throw UnimplementedError('pickImage() has not been implemented.');
