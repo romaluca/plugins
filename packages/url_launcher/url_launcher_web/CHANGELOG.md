@@ -1,3 +1,15 @@
+# 0.1.3
+
+- Added webOnlyWindowName parameter to launch()
+
+# 0.1.2+1
+
+- Update docs
+
+# 0.1.2
+
+- Adds "tel" and "sms" support 
+
 # 0.1.1+6
 
 - Open "mailto" urls with target set as "\_top" on Safari browsers.
